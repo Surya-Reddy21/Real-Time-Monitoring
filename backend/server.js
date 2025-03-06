@@ -75,13 +75,17 @@ const io = new Server(server, {
         methods: ["GET", "POST"]
     }
 })
+const connectedClients = new Map();
 
 io.on('connection', (socket) => {
     console.log('Client connected');
+    connectedClients.set(socket.id, socket);
     sensorDataEmitter.on('data', (data) => {
         socket.emit('sensorData', data);
     });
-    socket.on('disconnect', () => console.log('Client disconnected'));
+    socket.on('disconnect', () => {;
+    console.log(`Client disconnected: ${socket.id}}`);
+    connectedClients.delete(socket.id);});
 });
 
 server.listen(3007, () => console.log('Server started on port 3007'));
